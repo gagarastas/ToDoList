@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h3>Дела на сегодня ({{ allTargets|length }}):</h3>
+
+    {% for target in allTargets %}
+        <div class="targets" id="{{ target.id }}">
+            {% if target.status == 0 %}
+                <p class="target-text">{{ target.target }}</p>
+                <button class="status btn btn-success">сделано</button>
+                <button class="change btn btn-warning">изменить</button>
+            {% else %}
+                <p class="target-text"><s>{{ target.target }}</s></p>
+                <button class="status btn btn-success">не сделано</button>
+                <button disabled class="change btn btn-warning">изменить</button>
+            {% endif %}
+            <button class="del btn btn-danger">удалить</button>
+            <form class="panel"  action="" method="post">
+                <input class="new-name" type="text" name="new-target">
+                <button class="subm-changes">принять</button>
+            </form>
+        </div>
+        <script>
+            function del(data) {
+                $('div#' + data.id).remove();
+            }
+
+            function change(data) {
+                $("div#" + data.id + " p").text(data.newName);
+                slide(data.id);
+            }
+
+            function slide(id) {
+                var elem = $("div#" + id + ">button.change");
+                $("div#" + id + ">form.panel").slideToggle("slow");
+                if (elem.text() === 'изменить')
+                    elem.text('отменить');
+                else
+                    elem.text('изменить');
+            }
+
+            $("div#{{ target.id }}>button.status").bind('click', function () {
+                var elemWithText = $("div#{{ target.id }}>p");
+                var text = elemWithText.text();
+                var butToChangeStatus = $("div#{{ target.id }}>button.status");
+                var butChange = $("div#{{ target.id }}>button.change");
+                if (butToChangeStatus.text() === "не сделано") {
+                    elemWithText.html("<p>" + text + "</p>");
+                    butToChangeStatus.text('сделано');
+                    butChange.attr('disabled', false);
+                } else {
+                    elemWithText.html("<p><s>" + text + "</s></p>");
+                    butToChangeStatus.text('не сделано');
+                    butChange.attr('disabled', true);
+                }
+                $.ajax({
+                    url: "{{ path('status') }}",
+                    type: "POST",
+                    data: {'id':{{ target.id }}},
+                    dataType: "json"
+                });
+            });
+
+            $("div#{{ target.id }}>button.change").bind('click', function () {
+                var id = {{ target.id }};
+                slide(id);
+            });
+
+            $("div#{{ target.id }} button.subm-changes").bind('click', function () {
+                event.preventDefault();
+                var input = $("div#{{ target.id }} input.new-name");
+                var newName = input.val();
+                input.val("");
+                $.ajax({
+                    url: "{{ path('change') }}",
+                    type: "POST",
+                    data: {'id':{{ target.id }}, 'newName': newName},
+                    dataType: "json",
+                    success: change
+                });
+            });
+
+            $("div#{{ target.id }}>button.del").bind("click", function () {
+                $.ajax({
+                    url: "{{ path('remove',{id:target.id}) }}",
+                    type: "GET",
+                    success: del
+                });
+            });
+        </script>
+        <br>
+    {% endfor %}
+{% endblock %}
+
+{% block adding %}
+    <br>
+    <div class="form-group">
+        <form action="{{ path('add') }}" method="post">
+            <label class='text-for-adding'>Введите текст того что нужно сделать:</label> <br>
+            <input class="form-control" type="text" name="new-target">
+            <button class="btn btn-light" type="submit">добавить в список</button>
+        </form>
+    </div>
+    <button class="btn btn-link"><a href="{{ path('logout') }}">Выйти</a></button>
+{% endblock %}
+
+
+

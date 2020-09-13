@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+<div class ="container">
+<h3>Регистрация</h3>
+    {% if registerErrors %}
+        {% for error in registerErrors %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
+<form action="{{ path('register') }}" method="post">
+    <label for="username">Логин</label>
+    <input class="form-control" type="text" id="username" name="username"  /> <br>
+    <label for="password">Пароль</label>
+    <input class="form-control" type="password" id="password" name="password" />
+    <label for="password">Повторите пароль</label>
+    <input class="form-control" type="password" id="passwordCheck" name="passwordCheck" />
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}"> <br>
+    <button class="btn btn-primary" type="submit">зарегистрироваться</button>
+    <a class="btn btn-primary" href="{{ path('login') }}">Войти</a>
+</form>
+</div>
+</body>
+</html>

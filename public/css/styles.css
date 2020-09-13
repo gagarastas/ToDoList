@@ -1,0 +1,13 @@
+body{
+    background-image: url("/images/3258693.jpg");
+}
+.text-for-adding {
+    font-size:25px;
+}
+.target-text{
+    font-size:20px;
+    font-style: oblique;
+}
+.panel{
+    display: none;
+}

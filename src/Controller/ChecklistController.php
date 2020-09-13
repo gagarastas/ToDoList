@@ -11,9 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ChecklistController extends AbstractController
 {
-//    /**
-//     * @Route("/{day_of_week<monday|tuesday|wednesday|thursday|friday|saturday|sunday>}",name="day",methods="GET")
-//     */
+
     /**
      * @Route("/list/",name="list", methods="GET")
      */
